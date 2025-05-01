@@ -422,6 +422,15 @@ def launch_main_app(user_id):
                                 width=150)
     ToolTip(toggle_button, "Switch between waveform and spectrogram views")
     toggle_button.pack(side="right", padx=10)
+    
+    # Add Update Waveform button
+    update_button = ctk.CTkButton(control_frame, 
+                                text="Update Waveform", 
+                                command=lambda: vu.display_waveform_in_window(root), 
+                                font=raleway_regular,
+                                width=150)
+    ToolTip(update_button, "Refresh the waveform display")
+    update_button.pack(side="right", padx=10)
 
     # Set focus to first tab
     tabview.set("LSB Watermarking")

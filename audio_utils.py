@@ -44,19 +44,24 @@ def load_audio(root=None):
     global current_file
     filename = filedialog.askopenfilename(filetypes=[("Audio files", "*.wav *.mp3")])
     if filename:
-        audio, sr = librosa.load(filename, sr=None)
-        globals()['original_audio'] = audio
-        globals()['sr'] = sr
-        globals()['current_file'] = filename
-        print(f"Loaded {filename}")
-        
-        if root:
-            vu.display_waveform_in_window(root)
-            # Update status bar
-            for widget in root.winfo_children():
-                if isinstance(widget, ctk.CTkLabel) and widget._height == 20:
-                    widget.configure(text=f"Loaded: {os.path.basename(filename)} | SR: {sr}Hz | Duration: {len(audio)/sr:.2f}s")
-                    break
+        try:
+            audio, sr = librosa.load(filename, sr=None)
+            globals()['original_audio'] = audio
+            globals()['sr'] = sr
+            globals()['current_file'] = filename
+            print(f"Loaded {filename}")
+            
+            if root:
+                # Update status bar
+                for widget in root.winfo_children():
+                    if isinstance(widget, ctk.CTkLabel) and widget.cget("text").startswith("Ready"):
+                        widget.configure(text=f"Loaded: {os.path.basename(filename)} | SR: {sr}Hz | Duration: {len(audio)/sr:.2f}s")
+                        break
+                
+                # Force waveform update
+                vu.display_waveform_in_window(root)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load audio: {str(e)}")
 
 def lsb_watermark():
     global watermarked_audio, original_audio, sr, watermark_strength
